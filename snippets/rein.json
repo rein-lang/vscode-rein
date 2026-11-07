@@ -1,11 +1,14 @@
 {
   "Decision function": {
     "prefix": "fn",
-    "description": "Rein decision file: description, input and if/return skeleton",
+    "description": "Rein decision file: doc comment, input and if/return skeleton",
     "body": [
-      "description \"${1:What this decision decides.}\"",
-      "",
-      "input ${2:name}: ${3:bool} \"${4:Question for the user?}\"",
+      "/**",
+      " * ${1:What this decision decides.}",
+      " *",
+      " * @param ${2:name} ${3:Question for the user?}",
+      " */",
+      "input ${2:name}: ${4:bool}",
       "",
       "if ${2:name} {",
       "\treturn \"${5:approved}\"",
@@ -36,9 +39,9 @@
   },
   "Input declaration": {
     "prefix": "input",
-    "description": "Declare a bool or choice input with a question",
+    "description": "Declare a bool or choice input. Add a matching @param line to the doc comment.",
     "body": [
-      "input ${1:name}: ${2:bool} \"${3:Question?}\"$0"
+      "input ${1:name}: ${2:bool}$0"
     ]
   }
 }

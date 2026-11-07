@@ -3,6 +3,7 @@
   "name": "Rein",
   "scopeName": "source.rein",
   "patterns": [
+    { "include": "#doc-comment" },
     { "include": "#comments" },
     { "include": "#strings" },
     { "include": "#input-declaration" },
@@ -12,6 +13,24 @@
     { "include": "#references" }
   ],
   "repository": {
+    "doc-comment": {
+      "name": "comment.block.documentation.rein",
+      "begin": "/\\*\\*",
+      "end": "\\*/",
+      "patterns": [
+        {
+          "match": "(@param)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "storage.type.class.jsdoc" },
+            "2": { "name": "variable.parameter.rein" }
+          }
+        },
+        {
+          "name": "storage.type.class.jsdoc",
+          "match": "@[A-Za-z_][A-Za-z0-9_]*"
+        }
+      ]
+    },
     "comments": {
       "name": "comment.line.double-slash.rein",
       "match": "//.*$"
@@ -36,7 +55,7 @@
     },
     "keywords": {
       "name": "keyword.control.rein",
-      "match": "\\b(?:description|input|if|else|switch|case|default|return)\\b"
+      "match": "\\b(?:input|if|else|switch|case|default|return)\\b"
     },
     "types": {
       "name": "storage.type.rein",
