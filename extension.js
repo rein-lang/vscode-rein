@@ -75,7 +75,7 @@ async function startServer() {
       synchronize: {
         fileEvents: [
           vscode.workspace.createFileSystemWatcher("**/*.rein"),
-          vscode.workspace.createFileSystemWatcher("**/rein.toml"),
+          vscode.workspace.createFileSystemWatcher("**/main.rein"),
         ],
       },
     }
