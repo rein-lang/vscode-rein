@@ -75,7 +75,8 @@
   },
   "scripts": {
     "package": "vsce package",
-    "check-ts-syntax": "node scripts/check-ts-syntax.js"
+    "check-ts-syntax": "node scripts/check-ts-syntax.js",
+    "test": "node scripts/test-find-server.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

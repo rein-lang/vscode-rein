@@ -1,4 +1,5 @@
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
 const { LanguageClient } = require("vscode-languageclient/node");
@@ -14,6 +15,11 @@ function isExecutable(file) {
   }
 }
 
+// A leading `~` means the home directory.
+function expandHome(configured) {
+  return configured === "~" || configured.startsWith("~/") ? path.join(os.homedir(), configured.slice(1)) : configured;
+}
+
 // Returns the full path of the server binary, or undefined when it is missing.
 function findServer(configured) {
   if (configured === "rein") {
@@ -25,8 +31,15 @@ function findServer(configured) {
       }
     }
   }
-  if (path.isAbsolute(configured) || configured.includes(path.sep)) {
-    return isExecutable(configured) ? configured : undefined;
+  const expanded = expandHome(configured);
+  if (path.isAbsolute(expanded)) {
+    return isExecutable(expanded) ? expanded : undefined;
+  }
+  if (expanded.includes(path.sep)) {
+    // A relative path is relative to the first workspace folder.
+    const folder = (vscode.workspace.workspaceFolders || [])[0];
+    const full = path.resolve(folder ? folder.uri.fsPath : ".", expanded);
+    return isExecutable(full) ? full : undefined;
   }
   for (const dir of (process.env.PATH || "").split(path.delimiter)) {
     const candidate = path.join(dir, configured);
@@ -72,7 +85,10 @@ async function startServer() {
 
 function activate(context) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("rein.restartServer", () => startServer())
+    vscode.commands.registerCommand("rein.restartServer", () => startServer()),
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("rein.serverPath")) return startServer();
+    })
   );
   return startServer();
 }
@@ -81,4 +97,4 @@ function deactivate() {
   return stopServer();
 }
 
-module.exports = { activate, deactivate };
+module.exports = { activate, deactivate, findServer };
