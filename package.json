@@ -75,14 +75,14 @@
   },
   "scripts": {
     "package": "vsce package",
-    "check-ts-syntax": "node scripts/check-ts-syntax.js",
-    "test": "node scripts/test-find-server.js"
+    "test": "node scripts/test-find-server.js && node scripts/test-grammar.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
     "@vscode/vsce": "^4.1.0",
-    "typescript": "^5.9.3"
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
   }
 }

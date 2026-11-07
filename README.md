@@ -1,7 +1,7 @@
 # Rein for VS Code
 
 Syntax highlighting, snippets, and language server support for `.rein` files.
-Rein is a strict subset of TypeScript, so the grammar is TypeScript's. The language server provides diagnostics, hover, go to definition, and completion for imports and parameters.
+Rein mimics TypeScript syntax and types, except `@` references (for example `@./ci/fix`). The grammar follows TypeScript's scope names. The language server provides diagnostics, hover, go to definition, and completion.
 
 ## Install
 
@@ -28,9 +28,9 @@ If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
 2. Press F5. A new Extension Development Host window opens the repo root.
 3. In that window, the extension uses `target/debug/rein` or `target/release/rein` when either exists.
 
-## Check the syntax
+## Test
 
-`npm run check-ts-syntax` parses every `examples/**/*.rein` file with the TypeScript parser and fails on any syntax error.
+`npm test` runs the `findServer` tests and the grammar tests. The grammar tests tokenize sample code with `vscode-textmate` and check the scopes.
 
 ## Commands
 

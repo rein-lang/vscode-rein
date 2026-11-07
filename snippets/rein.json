@@ -1,7 +1,7 @@
 {
   "Decision function": {
     "prefix": "fn",
-    "description": "Rein function: doc comment, one doc comment per parameter, and a return on every path",
+    "description": "Rein function: doc comment, a doc comment per parameter, a guard that returns, and a return",
     "body": [
       "/**",
       " * ${1:What this function decides.}",
@@ -13,46 +13,79 @@
       "  if (${4:flag}) {",
       "    return \"${6:approved}\";",
       "  }",
-      "",
       "  return \"${7:wait}\";",
       "}",
       "$0"
     ]
   },
-  "Import": {
-    "prefix": "import",
-    "description": "Import another function in this project. Return it by its name.",
+  "Async decision function": {
+    "prefix": "afn",
+    "description": "Async Rein function that asks the user with a const request",
     "body": [
-      "import ${1:nextStep} from \"${2:./next_step}\";$0"
-    ]
-  },
-  "If statement": {
-    "prefix": "if",
-    "description": "if block with return",
-    "body": [
-      "if (${1:condition}) {",
-      "  return \"${2:result}\";",
-      "}$0"
-    ]
-  },
-  "Switch statement": {
-    "prefix": "switch",
-    "description": "switch on a union parameter with cases and default",
-    "body": [
-      "switch (${1:name}) {",
-      "  case \"${2:value}\":",
-      "    return \"${3:result}\";",
-      "  default:",
-      "    return \"${4:result}\";",
-      "}$0"
+      "/**",
+      " * ${1:What this function decides.}",
+      " */",
+      "export default async function ${2:name}(",
+      "  /** ${3:Question for the user?} */",
+      "  ${4:flag}: ${5:boolean},",
+      ") {",
+      "  /** ${6:Question to ask the user?} */",
+      "  const ${7:solved}: boolean = await request(\"${8:Instruction for the user.}\");",
+      "",
+      "  if (${7:solved}) {",
+      "    return \"${9:done}\";",
+      "  }",
+      "  return \"${10:wait}\";",
+      "}",
+      "$0"
     ]
   },
   "Parameter": {
     "prefix": "param",
-    "description": "Parameter with its own doc comment: a boolean or a union of strings",
+    "description": "Parameter with its own doc comment: a boolean or a union of string literals",
     "body": [
       "/** ${1:Question for the user?} */",
       "${2:name}: ${3:boolean},$0"
+    ]
+  },
+  "Switch statement": {
+    "prefix": "switch",
+    "description": "switch on a union parameter: one case per member, each returns",
+    "body": [
+      "switch (${1:name}) {",
+      "  case \"${2:first}\":",
+      "    return \"${3:result}\";",
+      "  case \"${4:second}\":",
+      "    return \"${5:result}\";",
+      "}$0"
+    ]
+  },
+  "Template file": {
+    "prefix": "tpl",
+    "description": "Template: one return of a template literal, with string parameters and doc comments",
+    "body": [
+      "/** ${1:What this template says.} */",
+      "export default function ${2:name}(",
+      "  /** ${3:Text to show.} */",
+      "  ${4:text}: string,",
+      ") {",
+      "  return `${5:Result}: \\${${4:text}}`;",
+      "}",
+      "$0"
+    ]
+  },
+  "Reference": {
+    "prefix": "ref",
+    "description": "Reference to another Rein function by path, without an extension",
+    "body": [
+      "return @./${1:folder}/${2:name};$0"
+    ]
+  },
+  "Call a template": {
+    "prefix": "call",
+    "description": "Return a call to a template reference with one string argument",
+    "body": [
+      "return @./${1:templates/reply}(\"${2:argument}\");$0"
     ]
   }
 }

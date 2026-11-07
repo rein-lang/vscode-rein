@@ -1,1 +1,143 @@
-{"scopeName":"source.rein","patterns":[{"include":"source.ts"}]}
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Rein",
+  "scopeName": "source.rein",
+  "fileTypes": ["rein"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#template" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#reference" },
+    { "include": "#globals" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.documentation.rein",
+          "begin": "/\\*\\*(?!/)",
+          "beginCaptures": { "0": { "name": "punctuation.definition.comment" } },
+          "end": "\\*/",
+          "endCaptures": { "0": { "name": "punctuation.definition.comment" } },
+          "patterns": [
+            {
+              "match": "^\\s*(\\*)(?!/)",
+              "captures": { "1": { "name": "punctuation.definition.comment" } }
+            }
+          ]
+        },
+        {
+          "name": "comment.line.double-slash",
+          "match": "(//).*$",
+          "captures": { "1": { "name": "punctuation.definition.comment" } }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.rein",
+          "begin": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin" } },
+          "end": "\"",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end" } },
+          "patterns": [{ "include": "#escapes" }]
+        },
+        {
+          "name": "string.quoted.single.rein",
+          "begin": "'",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin" } },
+          "end": "'",
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end" } },
+          "patterns": [{ "include": "#escapes" }]
+        }
+      ]
+    },
+    "escapes": {
+      "match": "\\\\.",
+      "name": "constant.character.escape"
+    },
+    "template": {
+      "name": "string.template.rein",
+      "begin": "`",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.template.begin" } },
+      "end": "`",
+      "endCaptures": { "0": { "name": "punctuation.definition.string.template.end" } },
+      "patterns": [
+        { "include": "#escapes" },
+        {
+          "name": "meta.template.expression.rein",
+          "begin": "\\$\\{",
+          "beginCaptures": { "0": { "name": "punctuation.definition.template-expression" } },
+          "end": "\\}",
+          "endCaptures": { "0": { "name": "punctuation.definition.template-expression" } },
+          "patterns": [
+            {
+              "name": "variable.other.rein",
+              "match": "[A-Za-z_][A-Za-z0-9_]*"
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "storage.modifier",
+          "match": "\\b(export|default|async)\\b"
+        },
+        {
+          "name": "storage.type.function",
+          "match": "\\bfunction\\b"
+        },
+        {
+          "name": "storage.type",
+          "match": "\\bconst\\b"
+        },
+        {
+          "name": "keyword.control",
+          "match": "\\b(await|if|switch|case|return)\\b"
+        },
+        {
+          "name": "invalid.illegal",
+          "match": "\\b(import|from|else|for|while|do|let|var)\\b"
+        }
+      ]
+    },
+    "types": {
+      "name": "storage.type.rein",
+      "match": "\\b(boolean|string)\\b"
+    },
+    "reference": {
+      "name": "entity.name.function.rein",
+      "match": "@\\.\\.?/[A-Za-z0-9_/]+"
+    },
+    "globals": {
+      "name": "support.function.rein",
+      "match": "\\b(delegate|askUser|request)\\b(?=\\s*[(=])"
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.comparison",
+          "match": "===|!=="
+        },
+        {
+          "name": "keyword.operator.logical",
+          "match": "&&|\\|\\||!"
+        },
+        {
+          "name": "keyword.operator.union",
+          "match": "\\|"
+        },
+        {
+          "name": "keyword.operator.assignment",
+          "match": "="
+        }
+      ]
+    }
+  }
+}
