@@ -1,0 +1,85 @@
+{
+  "name": "rein",
+  "displayName": "Rein",
+  "description": "Language support for Rein, a small language for agent decision flows.",
+  "version": "0.1.0",
+  "publisher": "tupe12334",
+  "private": true,
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tupe12334/rein"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:rein"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "rein",
+        "aliases": [
+          "Rein"
+        ],
+        "extensions": [
+          ".rein"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rein",
+        "scopeName": "source.rein",
+        "path": "./syntaxes/rein.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "rein",
+        "path": "./snippets/rein.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "rein.restartServer",
+        "title": "Rein: Restart Language Server"
+      }
+    ],
+    "configuration": {
+      "title": "Rein",
+      "properties": {
+        "rein.serverPath": {
+          "type": "string",
+          "default": "rein",
+          "description": "Path to the rein binary; it is started as `<path> lsp`."
+        },
+        "rein.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the messages between VS Code and the rein language server."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^4.1.0"
+  }
+}

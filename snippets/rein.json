@@ -1,0 +1,44 @@
+{
+  "Decision function": {
+    "prefix": "fn",
+    "description": "Rein decision file: description, input and if/return skeleton",
+    "body": [
+      "description \"${1:What this decision decides.}\"",
+      "",
+      "input ${2:name}: ${3:bool} \"${4:Question for the user?}\"",
+      "",
+      "if ${2:name} {",
+      "\treturn \"${5:approved}\"",
+      "}",
+      "",
+      "return \"${6:wait}\"",
+      "$0"
+    ]
+  },
+  "If statement": {
+    "prefix": "if",
+    "description": "if block with return",
+    "body": [
+      "if ${1:condition} {",
+      "\treturn \"${2:result}\"",
+      "}$0"
+    ]
+  },
+  "Switch statement": {
+    "prefix": "switch",
+    "description": "switch on a value with cases and default",
+    "body": [
+      "switch ${1:name} {",
+      "\tcase \"${2:value}\" { return \"${3:result}\" }",
+      "\tdefault { return \"${4:result}\" }",
+      "}$0"
+    ]
+  },
+  "Input declaration": {
+    "prefix": "input",
+    "description": "Declare a bool or choice input with a question",
+    "body": [
+      "input ${1:name}: ${2:bool} \"${3:Question?}\"$0"
+    ]
+  }
+}
