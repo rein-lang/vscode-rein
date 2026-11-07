@@ -1,47 +1,58 @@
 {
   "Decision function": {
     "prefix": "fn",
-    "description": "Rein decision file: doc comment, input and if/return skeleton",
+    "description": "Rein function: doc comment, one doc comment per parameter, and a return on every path",
     "body": [
       "/**",
-      " * ${1:What this decision decides.}",
-      " *",
-      " * @param ${2:name} ${3:Question for the user?}",
+      " * ${1:What this function decides.}",
       " */",
-      "input ${2:name}: ${4:bool}",
+      "export default function ${2:name}(",
+      "  /** ${3:Question for the user?} */",
+      "  ${4:flag}: ${5:boolean},",
+      ") {",
+      "  if (${4:flag}) {",
+      "    return \"${6:approved}\";",
+      "  }",
       "",
-      "if ${2:name} {",
-      "\treturn \"${5:approved}\"",
+      "  return \"${7:wait}\";",
       "}",
-      "",
-      "return \"${6:wait}\"",
       "$0"
+    ]
+  },
+  "Import": {
+    "prefix": "import",
+    "description": "Import another function in this project. Return it by its name.",
+    "body": [
+      "import ${1:nextStep} from \"${2:./next_step}\";$0"
     ]
   },
   "If statement": {
     "prefix": "if",
     "description": "if block with return",
     "body": [
-      "if ${1:condition} {",
-      "\treturn \"${2:result}\"",
+      "if (${1:condition}) {",
+      "  return \"${2:result}\";",
       "}$0"
     ]
   },
   "Switch statement": {
     "prefix": "switch",
-    "description": "switch on a value with cases and default",
+    "description": "switch on a union parameter with cases and default",
     "body": [
-      "switch ${1:name} {",
-      "\tcase \"${2:value}\" { return \"${3:result}\" }",
-      "\tdefault { return \"${4:result}\" }",
+      "switch (${1:name}) {",
+      "  case \"${2:value}\":",
+      "    return \"${3:result}\";",
+      "  default:",
+      "    return \"${4:result}\";",
       "}$0"
     ]
   },
-  "Input declaration": {
-    "prefix": "input",
-    "description": "Declare a bool or choice input. Add a matching @param line to the doc comment.",
+  "Parameter": {
+    "prefix": "param",
+    "description": "Parameter with its own doc comment: a boolean or a union of strings",
     "body": [
-      "input ${1:name}: ${2:bool}$0"
+      "/** ${1:Question for the user?} */",
+      "${2:name}: ${3:boolean},$0"
     ]
   }
 }

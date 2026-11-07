@@ -74,12 +74,14 @@
     }
   },
   "scripts": {
-    "package": "vsce package"
+    "package": "vsce package",
+    "check-ts-syntax": "node scripts/check-ts-syntax.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
-    "@vscode/vsce": "^4.1.0"
+    "@vscode/vsce": "^4.1.0",
+    "typescript": "^5.9.3"
   }
 }
