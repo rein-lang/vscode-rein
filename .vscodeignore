@@ -2,3 +2,5 @@
 .vscode-test/
 .vscode/
 scripts/
+pnpm-lock.yaml
+pnpm-workspace.yaml

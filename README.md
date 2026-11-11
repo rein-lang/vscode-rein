@@ -15,8 +15,8 @@ Then build and install the extension:
 
 ```sh
 cd editors/vscode
-npm install
-npx vsce package
+pnpm install
+pnpm run package
 code --install-extension rein-0.1.0.vsix
 ```
 
@@ -30,7 +30,7 @@ If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
 
 ## Test
 
-`npm test` runs the `findServer` tests and the grammar tests. The grammar tests tokenize sample code with `vscode-textmate` and check the scopes.
+`pnpm test` runs the `findServer` tests and the grammar tests. The grammar tests tokenize sample code with `vscode-textmate` and check the scopes.
 
 ## Commands
 
