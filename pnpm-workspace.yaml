@@ -1,4 +1,3 @@
 # vsce runs `npm list` to collect deps; it only understands a flat node_modules.
 nodeLinker: hoisted
-allowBuilds:
-  "@vscode/vsce-sign": true
+dangerouslyAllowAllBuilds: true
