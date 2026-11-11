@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "publisher": "tupe12334",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/tupe12334/rein"
