@@ -62,7 +62,7 @@ const sample3 = [
   "export default function g(",
   "  /** Ask? */ flag: boolean,",
   ") {",
-  '  return @./ci/fix("it", `x ${flag}`);',
+  '  return @./ci/fix(pr="it", note=`x ${flag}`);',
   "}",
 ].join("\n");
 
@@ -91,6 +91,12 @@ check("if and return are keyword scopes", async () => {
     const token = tokenFor(lines, word);
     assert.ok(hasScope(token, "keyword"), `${word}: ${JSON.stringify(token.scopes)}`);
   }
+});
+
+check("named argument name is a parameter scope", async () => {
+  const lines = await tokenize(sample3);
+  const token = tokenFor(lines, "pr");
+  assert.ok(hasScope(token, "variable.parameter"), JSON.stringify(token.scopes));
 });
 
 check("await is a keyword scope", async () => {

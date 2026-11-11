@@ -11,6 +11,7 @@
     { "include": "#types" },
     { "include": "#reference" },
     { "include": "#globals" },
+    { "include": "#argument-names" },
     { "include": "#operators" }
   ],
   "repository": {
@@ -118,6 +119,10 @@
     "globals": {
       "name": "support.function.rein",
       "match": "\\b(delegate|askUser|request)\\b(?=\\s*[(=])"
+    },
+    "argument-names": {
+      "name": "variable.parameter.rein",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*=(?!=))"
     },
     "operators": {
       "patterns": [
