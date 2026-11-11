@@ -86,6 +86,17 @@ async function startServer() {
 function activate(context) {
   context.subscriptions.push(
     vscode.commands.registerCommand("rein.restartServer", () => startServer()),
+    // The server's reference code lens sends LSP JSON. VS Code's references view takes its own types.
+    vscode.commands.registerCommand("rein.showReferences", (uri, position, locations) => {
+      if (!client) return;
+      const p2c = client.protocol2CodeConverter;
+      return vscode.commands.executeCommand(
+        "editor.action.showReferences",
+        p2c.asUri(uri),
+        p2c.asPosition(position),
+        locations.map((l) => p2c.asLocation(l))
+      );
+    }),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("rein.serverPath")) return startServer();
     })
