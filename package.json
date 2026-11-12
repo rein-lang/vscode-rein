@@ -30,9 +30,17 @@
         "extensions": [
           ".rein"
         ],
+        "filenamePatterns": [
+          "**/*.rein"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
+    "configurationDefaults": {
+      "files.associations": {
+        "*.rein": "rein"
+      }
+    },
     "grammars": [
       {
         "language": "rein",
