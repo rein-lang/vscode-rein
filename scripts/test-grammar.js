@@ -85,6 +85,23 @@ check("reference @./ci/fix is entity.name.function", async () => {
   assert.ok(hasScope(token, "entity.name.function"), JSON.stringify(token.scopes));
 });
 
+check("@./x, @../y, @pr-handling and @pr-handling/main are the same reference scope", async () => {
+  const lines = await tokenize(
+    ["  return @./x;", "  return @../y;", "  return @pr-handling;", "  return @pr-handling/main(pr=pr);"].join("\n"),
+  );
+  for (const ref of ["@./x", "@../y", "@pr-handling", "@pr-handling/main"]) {
+    const token = tokenFor(lines, ref);
+    assert.ok(hasScope(token, "entity.name.function.rein"), `${ref}: ${JSON.stringify(token.scopes)}`);
+  }
+  assert.ok(hasScope(tokenFor(lines, "pr"), "variable.parameter"));
+});
+
+check("@ inside a text template is not a reference", async () => {
+  const lines = await tokenize("  return `Hand it to @pr-handling/main now.`;");
+  const refs = lines.flat().filter((t) => hasScope(t, "entity.name.function"));
+  assert.deepStrictEqual(refs, []);
+});
+
 check("if and return are keyword scopes", async () => {
   const lines = await tokenize(sample1);
   for (const word of ["if", "return"]) {
