@@ -131,6 +131,14 @@ check("=== is keyword.operator.comparison", async () => {
   assert.ok(hasScope(token, "keyword.operator.comparison"), JSON.stringify(token.scopes));
 });
 
+check("== and != are keyword.operator.comparison", async () => {
+  const lines = await tokenize('if (c == "x") { return "a"; }\nif (c != "x") { return "b"; }');
+  for (const op of ["==", "!="]) {
+    const token = tokenFor(lines, op);
+    assert.ok(hasScope(token, "keyword.operator.comparison"), JSON.stringify(token.scopes));
+  }
+});
+
 check("request( is support.function, const is storage, boolean is storage.type", async () => {
   const lines = await tokenize(sample2);
   assert.ok(hasScope(tokenFor(lines, "request"), "support.function"));
