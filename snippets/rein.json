@@ -11,9 +11,9 @@
       "  ${4:flag}: ${5:boolean},",
       ") {",
       "  if (${4:flag}) {",
-      "    return \"${6:approved}\";",
+      "    return `${6:approved}`;",
       "  }",
-      "  return \"${7:wait}\";",
+      "  return `${7:wait}`;",
       "}",
       "$0"
     ]
@@ -30,12 +30,12 @@
       "  ${4:flag}: ${5:boolean},",
       ") {",
       "  /** ${6:Question to ask the user?} */",
-      "  const ${7:solved}: boolean = await request(\"${8:Instruction for the user.}\");",
+      "  const ${7:solved}: boolean = await request(`${8:Instruction for the user.}`);",
       "",
       "  if (${7:solved}) {",
-      "    return \"${9:done}\";",
+      "    return `${9:done}`;",
       "  }",
-      "  return \"${10:wait}\";",
+      "  return `${10:wait}`;",
       "}",
       "$0"
     ]
@@ -64,9 +64,9 @@
     "body": [
       "switch (${1:name}) {",
       "  case \"${2:first}\":",
-      "    return \"${3:result}\";",
+      "    return `${3:result}`;",
       "  case \"${4:second}\":",
-      "    return \"${5:result}\";",
+      "    return `${5:result}`;",
       "}$0"
     ]
   },
@@ -95,7 +95,7 @@
     "prefix": "call",
     "description": "Return a call to a template reference with one named string argument",
     "body": [
-      "return @./${1:templates/reply}(${2:name}=\"${3:argument}\");$0"
+      "return @./${1:templates/reply}(${2:name}=`${3:argument}`);$0"
     ]
   }
 }
