@@ -48,6 +48,16 @@
       "${2:name}: ${3:boolean},$0"
     ]
   },
+  "Struct": {
+    "prefix": "interface",
+    "description": "Input struct: one doc comment per field. A function takes it as ({ field }: Input)",
+    "body": [
+      "interface ${1:Input} {",
+      "  /** ${2:Question for the user?} */",
+      "  ${3:name}: ${4:boolean};",
+      "}$0"
+    ]
+  },
   "Switch statement": {
     "prefix": "switch",
     "description": "switch on a union parameter: one case per member, each returns",
