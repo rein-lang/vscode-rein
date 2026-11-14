@@ -18,16 +18,17 @@ Every language feature comes from the Rust language server, `rein lsp`, in the [
 
 ## Install
 
-Build the extension package from this repo:
+Install [Rein Language](https://marketplace.visualstudio.com/items?itemName=rein-lang.rein-language) from the Marketplace:
+
+```sh
+code --install-extension rein-lang.rein-language
+```
+
+To install a local build instead, package this repo and install the vsix:
 
 ```sh
 pnpm install
 pnpm run package
-```
-
-This writes `rein-language-0.1.0.vsix`. Install it:
-
-```sh
 code --install-extension rein-language-0.1.0.vsix
 ```
 
