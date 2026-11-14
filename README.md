@@ -76,6 +76,14 @@ The language features have their tests in the rein repo: `cargo test -p rein --t
 - `rein.serverPath` (default `rein`): path to the rein binary. It starts as `<path> lsp`.
 - `rein.trace.server` (`off`, `messages`, `verbose`): traces the messages between VS Code and the server.
 
+## Release
+
+Releases come from git; nobody publishes by hand.
+
+1. Give each pull request a [Conventional Commits](https://www.conventionalcommits.org) title, such as `feat: ...` or `fix: ...`. The `PR title` check flags a bad title; do not merge while it is red. The repo allows squash merge only, so the title becomes the changelog line.
+2. On each merge to `main`, release-please keeps a release pull request open. It bumps `package.json` and writes `CHANGELOG.md`.
+3. Merge the release pull request. It tags the version, makes a GitHub release, and the publish workflow publishes the version to the Marketplace.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
