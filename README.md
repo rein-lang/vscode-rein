@@ -1,3 +1,5 @@
+<p align="center"><img src="images/logo.png" width="128" alt="Rein logo"></p>
+
 # Rein for VS Code
 
 Syntax highlighting, snippets, and language server support for `.rein` files.
