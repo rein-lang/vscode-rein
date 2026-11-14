@@ -19,11 +19,15 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Debuggers"
   ],
   "main": "./extension.js",
   "activationEvents": [
-    "onLanguage:rein"
+    "onLanguage:rein",
+    "onDebugResolve:rein",
+    "onCommand:rein.debugProgram",
+    "onCommand:rein.runProgram"
   ],
   "contributes": {
     "languages": [
@@ -59,19 +63,109 @@
         "path": "./snippets/rein.json"
       }
     ],
+    "breakpoints": [
+      {
+        "language": "rein"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "rein",
+        "label": "Rein",
+        "languages": [
+          "rein"
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "program"
+            ],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "The .rein file to run, or a program name (see `rein list`)."
+              },
+              "entry": {
+                "type": "string",
+                "description": "Function to start from, as its path under the root without .rein. Default: main."
+              },
+              "inputs": {
+                "type": "object",
+                "description": "Values of the entry's string parameters, by name. A missing one is asked.",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "answers": {
+                "type": "object",
+                "description": "Answers given up front, by key such as merge.ci. Each other question is asked.",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "default": false,
+                "description": "Stop before the first question."
+              }
+            }
+          }
+        },
+        "initialConfigurations": [
+          {
+            "type": "rein",
+            "request": "launch",
+            "name": "Debug Rein Program",
+            "program": "${file}",
+            "stopOnEntry": false
+          }
+        ],
+        "configurationSnippets": [
+          {
+            "label": "Rein: Debug a program",
+            "description": "Run a .rein program in the debugger. Questions are asked in VS Code.",
+            "body": {
+              "type": "rein",
+              "request": "launch",
+              "name": "Debug Rein Program",
+              "program": "^\"\\${file}\"",
+              "stopOnEntry": false
+            }
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "rein.restartServer",
         "title": "Rein: Restart Language Server"
+      },
+      {
+        "command": "rein.debugProgram",
+        "title": "Rein: Debug Program",
+        "icon": "$(play)"
+      },
+      {
+        "command": "rein.runProgram",
+        "title": "Rein: Run Program"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "rein.debugProgram",
+          "when": "resourceLangId == rein",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "title": "Rein",
       "properties": {
         "rein.serverPath": {
           "type": "string",
           "default": "rein",
-          "description": "Path to the rein binary; it is started as `<path> lsp`."
+          "description": "Path to the rein binary; it is started as `<path> lsp`, and `<path> dap` to debug."
         },
         "rein.trace.server": {
           "type": "string",
@@ -88,7 +182,7 @@
   },
   "scripts": {
     "package": "vsce package",
-    "test": "node scripts/test-find-server.js && node scripts/test-grammar.js"
+    "test": "node scripts/test-find-server.js && node scripts/test-grammar.js && node scripts/test-ask.js"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

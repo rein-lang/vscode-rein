@@ -52,6 +52,32 @@ A program is one folder with a `main.rein`. A reference cannot leave its program
 | Signature help | (typing) | In call parentheses: the callee's parameters (or struct fields), with the current one marked. |
 | Quick fixes | Quick Fix | Add a missing doc comment to a function or a parameter. Add `name=` to a positional argument. |
 
+## Debug a program
+
+Open a `.rein` file and click the play button in the editor title bar, or run `Rein: Debug Program` from the command palette. Set breakpoints in the gutter, as in any file. The debugger starts `rein dap`, the same binary as the language server.
+
+- The debugger stops at a breakpoint on a question, a request, a hand-off (`@./...`), or the end of the flow. It stops before the question is asked.
+- A question it cannot answer opens a prompt: a pick list for a `boolean` or a union, a text box for a `string`. A `string` input of the entry that has no value is asked first. Press Escape to cancel, which stops the program.
+- `Rein: Run Program` runs without the debugger. It still asks the questions, but it stops at no breakpoint.
+- The Variables view shows the inputs, the answers so far, and the current step.
+- The call stack shows one frame per function on the walk. Each frame shows its line.
+
+To pass values up front, add a launch configuration. Run `Debug: Add Configuration...` and pick `Rein`:
+
+```json
+{
+  "type": "rein",
+  "request": "launch",
+  "name": "Debug Rein Program",
+  "program": "${workspaceFolder}/pr-handling/main.rein",
+  "inputs": { "pr": "https://github.com/owner/repo/pull/1" },
+  "answers": { "main.draft": "no" },
+  "stopOnEntry": false
+}
+```
+
+`program` is a `.rein` file or a program name. `entry` starts from another function. Stepping moves to the next question, request or end. It does not stop inside a hand-off.
+
 ## Development
 
 1. Clone the [rein repo](https://github.com/tupe12334/rein) and build its CLI, for example `cargo build -p rein`.
