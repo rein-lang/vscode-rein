@@ -1,8 +1,7 @@
 # Tests every pull request and every push to main. On a push to main, it
 # publishes the package.json version to the VS Code Marketplace when that
-# version is not there yet, then tags the commit that bumped it. A release
-# is a merged version bump. Auth is Marketplace trusted publishing (GitHub
-# OIDC), so no token is stored.
+# version is not there yet. A release is a merged version bump. Auth is
+# Marketplace trusted publishing (GitHub OIDC), so no token is stored.
 name: Publish
 
 on:
@@ -36,30 +35,18 @@ jobs:
     # ponytail: no concurrency group; it would drop a queued run and skip a
     # version. Two runs of one version are safe: --skip-duplicate.
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 2
           persist-credentials: false
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
-      # No install scripts run in the job that holds the write and OIDC tokens.
+      # No install scripts run in the job that holds the OIDC token.
       - run: pnpm install --frozen-lockfile --ignore-scripts
       - run: pnpm exec vsce publish --oidc --skip-duplicate
-      - name: Tag the version bump
-        env:
-          TOKEN: ${{ github.token }}
-        run: |
-          v=$(node -p 'require("./package.json").version')
-          old=$(git show HEAD~1:package.json 2>/dev/null | node -p 'try { JSON.parse(require("fs").readFileSync(0, "utf8")).version } catch { "" }')
-          # Tag only the commit that changed the version, so a later merge
-          # never tags code that was not published.
-          [ "$v" != "$old" ] || exit 0
-          git tag "v$v"
-          git push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "v$v"
