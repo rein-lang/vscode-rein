@@ -62,7 +62,7 @@ async function startServer() {
   const command = findServer(configured);
   if (!command) {
     vscode.window.showErrorMessage(
-      `Rein: binary "${configured}" not found. Install it with \`cargo install --path crates/rein\` from the repo root, or set rein.serverPath.`
+      `Rein: binary "${configured}" not found. Install it with \`cargo install --git https://github.com/tupe12334/rein rein\`, or set rein.serverPath.`
     );
     return;
   }

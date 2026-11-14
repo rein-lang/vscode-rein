@@ -7,8 +7,15 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "${workspaceFolder}/../.."
+        "${input:reinRepo}"
       ]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "reinRepo",
+      "type": "promptString",
+      "description": "Path to a checkout of https://github.com/tupe12334/rein, opened in the Extension Development Host"
     }
   ]
 }

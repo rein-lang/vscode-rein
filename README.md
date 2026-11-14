@@ -1,9 +1,37 @@
+<p align="center"><img src="images/logo.png" width="128" alt="Rein logo"></p>
+
 # Rein for VS Code
 
 Syntax highlighting, snippets, and language server support for `.rein` files.
 Rein mimics TypeScript syntax and types, except `@` references (for example `@./ci/fix`). The grammar follows TypeScript's scope names.
 
-Every language feature comes from the Rust language server, `rein lsp`. The extension starts the server and passes requests to it. It holds no feature logic.
+Every language feature comes from the Rust language server, `rein lsp`, in the [rein repo](https://github.com/tupe12334/rein). The extension starts the server and passes requests to it. It holds no feature logic.
+
+## Requirements
+
+- VS Code 1.85 or later.
+- The `rein` CLI on your `PATH`, or the full path to it in `rein.serverPath`. Install it from the [rein repo](https://github.com/tupe12334/rein):
+
+  ```sh
+  cargo install --git https://github.com/tupe12334/rein rein
+  ```
+
+## Install
+
+Build the extension package from this repo:
+
+```sh
+pnpm install
+pnpm run package
+```
+
+This writes `rein-0.1.0.vsix`. Install it:
+
+```sh
+code --install-extension rein-0.1.0.vsix
+```
+
+If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
 
 ## Features
 
@@ -24,36 +52,18 @@ A program is one folder with a `main.rein`. A reference cannot leave its program
 | Signature help | (typing) | In call parentheses: the callee's parameters (or struct fields), with the current one marked. |
 | Quick fixes | Quick Fix | Add a missing doc comment to a function or a parameter. Add `name=` to a positional argument. |
 
-## Install
+## Development
 
-From the repo root, install the language server:
-
-```sh
-cargo install --path crates/rein
-```
-
-Then build and install the extension:
-
-```sh
-cd editors/vscode
-pnpm install
-pnpm run package
-code --install-extension rein-0.1.0.vsix
-```
-
-If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
-
-## Develop
-
-1. Open `editors/vscode` in VS Code.
-2. Press F5. A new Extension Development Host window opens the repo root.
-3. In that window, the extension uses `target/debug/rein` or `target/release/rein` when either exists.
+1. Clone the [rein repo](https://github.com/tupe12334/rein) and build its CLI, for example `cargo build -p rein`.
+2. Run `pnpm install` in this repo.
+3. Open this repo in VS Code and press F5. Enter the path to the rein checkout when asked. The Extension Development Host opens that checkout.
+4. In that window, the extension uses `target/debug/rein` or `target/release/rein` from the checkout when either exists. This lookup applies only to a `rein.serverPath` set to its default, `rein`. It assumes the Cargo layout of the rein repo.
 
 ## Test
 
-`pnpm test` runs the `findServer` tests and the grammar tests. The grammar tests tokenize sample code with `vscode-textmate` and check the scopes.
+`pnpm test` runs the `findServer` tests and the grammar tests. The grammar tests tokenize sample code with `vscode-textmate` and check the scopes. They need no editor and no network.
 
-The language features have their tests in the server: `cargo test -p rein --test lsp`. Each test drives `rein lsp` over JSON-RPC against a real example program.
+The language features have their tests in the rein repo: `cargo test -p rein --test lsp`.
 
 ## Commands
 
@@ -64,3 +74,7 @@ The language features have their tests in the server: `cargo test -p rein --test
 
 - `rein.serverPath` (default `rein`): path to the rein binary. It starts as `<path> lsp`.
 - `rein.trace.server` (`off`, `messages`, `verbose`): traces the messages between VS Code and the server.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
