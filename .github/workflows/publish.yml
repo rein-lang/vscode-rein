@@ -1,13 +1,17 @@
-# Publishes the extension to the VS Code Marketplace when a v* tag is pushed.
-# Auth is Marketplace trusted publishing (GitHub OIDC), so no token is stored.
+# A merge to main publishes the package.json version to the VS Code
+# Marketplace when that version is not there yet, then tags it. A release
+# is a merged version bump. Auth is Marketplace trusted publishing (GitHub
+# OIDC), so no token is stored.
 name: Publish
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
+
+concurrency: publish
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
@@ -15,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -24,6 +26,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
-      - name: Check tag matches package.json version
-        run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
       - run: pnpm exec vsce publish --oidc --skip-duplicate
+      - name: Tag the version
+        run: |
+          v="v$(node -p 'require("./package.json").version')"
+          git ls-remote --exit-code --tags origin "refs/tags/$v" >/dev/null || {
+            git tag "$v"
+            git push origin "$v"
+          }
