@@ -1,5 +1,5 @@
 {
-  "name": "rein",
+  "name": "rein-language",
   "displayName": "Rein Language",
   "icon": "images/icon.png",
   "description": "Language support for Rein, a small language for agent decision flows.",

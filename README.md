@@ -25,10 +25,10 @@ pnpm install
 pnpm run package
 ```
 
-This writes `rein-0.1.0.vsix`. Install it:
+This writes `rein-language-0.1.0.vsix`. Install it:
 
 ```sh
-code --install-extension rein-0.1.0.vsix
+code --install-extension rein-language-0.1.0.vsix
 ```
 
 If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
