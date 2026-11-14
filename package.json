@@ -1,6 +1,7 @@
 {
   "name": "rein",
   "displayName": "Rein",
+  "icon": "images/icon.png",
   "description": "Language support for Rein, a small language for agent decision flows.",
   "version": "0.1.0",
   "publisher": "tupe12334",
