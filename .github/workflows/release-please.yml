@@ -1,0 +1,22 @@
+# On each merge to main, release-please keeps a release pull request open.
+# It bumps package.json and writes CHANGELOG.md from the merged pull
+# request titles. Merging it tags the version, makes a GitHub release, and
+# publish.yml publishes the new version to the Marketplace.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
