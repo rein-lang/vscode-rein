@@ -1,4 +1,4 @@
-<p align="center"><img src="images/logo.png" width="128" alt="Rein logo"></p>
+<p align="center"><img src="https://github.com/rein-lang/assets/raw/main/logo-256.png" width="128" alt="Rein logo"></p>
 
 # Rein for VS Code
 
