@@ -5,15 +5,15 @@
 Syntax highlighting, snippets, and language server support for `.rein` files.
 Rein mimics TypeScript syntax and types, except `@` references (for example `@./ci/fix`). The grammar follows TypeScript's scope names.
 
-Every language feature comes from the Rust language server, `rein lsp`, in the [rein repo](https://github.com/tupe12334/rein). The extension starts the server and passes requests to it. It holds no feature logic.
+Every language feature comes from the Rust language server, `rein lsp`, in the [rein repo](https://github.com/rein-lang/rein). The extension starts the server and passes requests to it. It holds no feature logic.
 
 ## Requirements
 
 - VS Code 1.85 or later.
-- The `rein` CLI on your `PATH`, or the full path to it in `rein.serverPath`. Install it from the [rein repo](https://github.com/tupe12334/rein):
+- The `rein` CLI on your `PATH`, or the full path to it in `rein.serverPath`. Install it from the [rein repo](https://github.com/rein-lang/rein):
 
   ```sh
-  cargo install --git https://github.com/tupe12334/rein rein
+  cargo install --git https://github.com/rein-lang/rein rein
   ```
 
 ## Install
@@ -55,7 +55,7 @@ A program is one folder with a `main.rein`. A reference cannot leave its program
 
 ## Development
 
-1. Clone the [rein repo](https://github.com/tupe12334/rein) and build its CLI, for example `cargo build -p rein`.
+1. Clone the [rein repo](https://github.com/rein-lang/rein) and build its CLI, for example `cargo build -p rein`.
 2. Run `pnpm install` in this repo.
 3. Open this repo in VS Code and press F5. Enter the path to the rein checkout when asked. The Extension Development Host opens that checkout.
 4. In that window, the extension uses `target/debug/rein` or `target/release/rein` from the checkout when either exists. This lookup applies only to a `rein.serverPath` set to its default, `rein`. It assumes the Cargo layout of the rein repo.
