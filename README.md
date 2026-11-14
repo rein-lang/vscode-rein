@@ -29,7 +29,7 @@ To install a local build instead, package this repo and install the vsix:
 ```sh
 pnpm install
 pnpm run package
-code --install-extension rein-language-0.1.0.vsix
+code --install-extension rein-language-0.1.1.vsix
 ```
 
 If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
