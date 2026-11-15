@@ -96,6 +96,14 @@ check("@./x, @../y, @pr-handling and @pr-handling/main are the same reference sc
   assert.ok(hasScope(tokenFor(lines, "pr"), "variable.parameter"));
 });
 
+check("@../../x and @./a/../b are one whole reference token", async () => {
+  const lines = await tokenize(["  return @../../x;", "  return @./a/../b;"].join("\n"));
+  for (const ref of ["@../../x", "@./a/../b"]) {
+    const token = tokenFor(lines, ref);
+    assert.ok(hasScope(token, "entity.name.function.rein"), `${ref}: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
 check("@ inside a text template is not a reference", async () => {
   const lines = await tokenize("  return `Hand it to @pr-handling/main now.`;");
   const refs = lines.flat().filter((t) => hasScope(t, "entity.name.function"));
