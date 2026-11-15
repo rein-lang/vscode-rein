@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/rein-lang/vscode-rein/issues"
   },
-  "homepage": "https://github.com/rein-lang/vscode-rein#readme",
+  "homepage": "https://rein-lang.com",
   "engines": {
     "vscode": "^1.85.0"
   },
