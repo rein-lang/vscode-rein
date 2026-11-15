@@ -1,10 +1,10 @@
 {
-  "name": "rein",
-  "displayName": "Rein",
-  "icon": "images/icon.png",
+  "name": "rein-language",
+  "displayName": "Rein Language",
+  "icon": "assets/icon-256.png",
   "description": "Language support for Rein, a small language for agent decision flows.",
-  "version": "0.1.0",
-  "publisher": "tupe12334",
+  "version": "0.2.0",
+  "publisher": "rein-lang",
   "private": true,
   "license": "MIT",
   "repository": {
@@ -20,6 +20,13 @@
   },
   "categories": [
     "Programming Languages"
+  ],
+  "keywords": [
+    "rein",
+    "agent",
+    "flow",
+    "decision",
+    "language server"
   ],
   "main": "./extension.js",
   "activationEvents": [
