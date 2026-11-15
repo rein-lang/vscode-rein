@@ -102,6 +102,19 @@ check("@ inside a text template is not a reference", async () => {
   assert.deepStrictEqual(refs, []);
 });
 
+check("@ inside a string or a comment is not a reference", async () => {
+  const samples = [
+    '  return "Hand it to @pr-handling/main now.";',
+    "  // Hand it to @pr-handling/main now.",
+    "/** Hand it to @pr-handling/main now. */",
+  ];
+  for (const sample of samples) {
+    const lines = await tokenize(sample);
+    const refs = lines.flat().filter((t) => hasScope(t, "entity.name.function"));
+    assert.deepStrictEqual(refs, [], sample);
+  }
+});
+
 check("if and return are keyword scopes", async () => {
   const lines = await tokenize(sample1);
   for (const word of ["if", "return"]) {
