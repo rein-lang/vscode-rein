@@ -94,6 +94,7 @@
     }
   },
   "scripts": {
+    "lint": "eslint .",
     "package": "vsce package",
     "test": "node scripts/test-find-server.js && node scripts/test-grammar.js"
   },
@@ -102,6 +103,8 @@
   },
   "devDependencies": {
     "@vscode/vsce": "^4.1.0",
+    "eslint": "^9.39.5",
+    "eslint-config-agent": "^3.1.0",
     "vscode-oniguruma": "^2.0.1",
     "vscode-textmate": "^9.3.2"
   },
