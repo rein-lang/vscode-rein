@@ -10,3 +10,4 @@ assets/**
 .gitmodules
 release-please-config.json
 .release-please-manifest.json
+eslint.config.mjs
