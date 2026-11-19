@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Point the install commands at rein v0.1.3.
+
 ## 0.3.1
 
 - Point the install commands at rein v0.1.2, which adds named imports.
