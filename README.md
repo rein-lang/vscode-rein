@@ -15,7 +15,7 @@ Every language feature comes from the Rust language server, `rein lsp`, in the [
 - The `rein` CLI on your `PATH`, or the full path to it in `rein.serverPath`. Install it from the [rein repo](https://github.com/rein-lang/rein):
 
   ```sh
-  cargo install --git https://github.com/rein-lang/rein --tag v0.1.3 --locked rein
+  cargo install --git https://github.com/rein-lang/rein --tag v0.1.4 --locked rein
   ```
 
 ## Install

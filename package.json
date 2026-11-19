@@ -3,7 +3,7 @@
   "displayName": "Rein Language",
   "icon": "assets/icon-256.png",
   "description": "Language support for Rein, a small language for agent decision processes.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "publisher": "rein-lang",
   "private": true,
   "license": "MIT",

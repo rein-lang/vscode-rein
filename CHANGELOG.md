@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+- Point the install commands at rein v0.1.4.
+
 ## 0.3.2
 
 - Point the install commands at rein v0.1.3.
