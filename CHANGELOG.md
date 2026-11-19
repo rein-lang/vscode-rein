@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- Highlight named imports: `import { fix } from "./ci/fix";`, `import { fix as ciFix } from "./ci/fix";`.
+- Highlight `import`, `from` and `as` as keywords, and the imported names as variables.
+- The deprecated default import `import fix from "./ci/fix";` still highlights.
+
 ## [0.2.0](https://github.com/rein-lang/vscode-rein/compare/v0.1.1...v0.2.0) (2026-11-14)
 
 

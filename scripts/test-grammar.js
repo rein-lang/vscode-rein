@@ -163,9 +163,59 @@ check("request( is support.function, const is storage, boolean is storage.type",
   assert.ok(hasScope(tokenFor(lines, "boolean"), "storage.type.rein"));
 });
 
-check("import is invalid.illegal", async () => {
-  const lines = await tokenize('import x from "y";');
-  assert.ok(hasScope(tokenFor(lines, "import"), "invalid.illegal"));
+// Import fixture: the five import forms from the Rein roadmap ("The new syntax").
+const importFixture = [
+  'import { fix } from "./ci/fix";',
+  'import { fix as ciFix } from "./ci/fix";',
+  'import { Message } from "./message.struct";',
+  'import { prHandling } from "pr-handling";',
+  'import fix from "./ci/fix";',
+].join("\n");
+
+check("import, from and as are keyword.control.import", async () => {
+  const lines = await tokenize(importFixture);
+  for (const word of ["import", "from"]) {
+    const token = tokenFor(lines, word);
+    assert.ok(hasScope(token, "keyword.control.import"), `${word}: ${JSON.stringify(token.scopes)}`);
+  }
+  const asToken = tokenFor(lines, "as");
+  assert.ok(hasScope(asToken, "keyword.control.import"), `as: ${JSON.stringify(asToken.scopes)}`);
+});
+
+check("import braces are punctuation", async () => {
+  const lines = await tokenize(importFixture);
+  for (const brace of lines[0].filter((t) => t.text === "{" || t.text === "}")) {
+    assert.ok(hasScope(brace, "punctuation.definition.block"), JSON.stringify(brace.scopes));
+  }
+  assert.ok(lines[0].some((t) => t.text === "{"), "no { token on line 1");
+});
+
+check("imported names and aliases are variable.other", async () => {
+  const lines = await tokenize(importFixture);
+  assert.ok(hasScope(tokenFor(lines, "fix"), "variable.other"), JSON.stringify(tokenFor(lines, "fix").scopes));
+  assert.ok(hasScope(tokenFor(lines, "ciFix"), "variable.other"), JSON.stringify(tokenFor(lines, "ciFix").scopes));
+  assert.ok(hasScope(tokenFor(lines, "Message"), "variable.other"), JSON.stringify(tokenFor(lines, "Message").scopes));
+  assert.ok(hasScope(tokenFor(lines, "prHandling"), "variable.other"), JSON.stringify(tokenFor(lines, "prHandling").scopes));
+});
+
+check("import paths are string.quoted.double", async () => {
+  const lines = await tokenize(importFixture);
+  for (const path of ["./ci/fix", "./message.struct", "pr-handling"]) {
+    const token = tokenFor(lines, path);
+    assert.ok(hasScope(token, "string.quoted.double"), `${path}: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
+check("import statement ends at ; and the next line is not import scope", async () => {
+  const lines = await tokenize(['import { fix } from "./ci/fix";', "const ok = 1;"].join("\n"));
+  const constToken = tokenFor(lines, "const");
+  assert.ok(hasScope(constToken, "storage"), JSON.stringify(constToken.scopes));
+  assert.ok(!hasScope(constToken, "meta.import"), JSON.stringify(constToken.scopes));
+});
+
+check("@./path reference still is entity.name.function outside import", async () => {
+  const lines = await tokenize(["import { fix } from \"./ci/fix\";", "  return @./ci/fix(pr=\"x\");"].join("\n"));
+  assert.ok(hasScope(tokenFor(lines, "@./ci/fix"), "entity.name.function"));
 });
 
 (async () => {
