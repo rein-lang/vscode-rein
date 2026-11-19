@@ -15,7 +15,7 @@ Every language feature comes from the Rust language server, `rein lsp`, in the [
 - The `rein` CLI on your `PATH`, or the full path to it in `rein.serverPath`. Install it from the [rein repo](https://github.com/rein-lang/rein):
 
   ```sh
-  cargo install --git https://github.com/rein-lang/rein --tag v0.1.1 --locked rein
+  cargo install --git https://github.com/rein-lang/rein --tag v0.1.2 --locked rein
   ```
 
 ## Install
@@ -31,10 +31,20 @@ To install a local build instead, package this repo and install the vsix:
 ```sh
 pnpm install
 pnpm run package
-code --install-extension rein-language-0.1.1.vsix
+code --install-extension rein-language-0.3.1.vsix
 ```
 
 If VS Code cannot find `rein`, set `rein.serverPath` to the full binary path.
+
+## Imports
+
+Import a function by name, as in TypeScript:
+
+```ts
+import { fix } from "./ci/fix";
+```
+
+The `@` references (for example `@./ci/fix`) are deprecated. The editor shows them struck through. The quick fix "Convert to named import" rewrites one. Rein 0.2.0 makes them an error, on or after 2026-12-19. To convert a whole program, run `rein migrate imports`.
 
 ## Features
 

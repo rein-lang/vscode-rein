@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Point the install commands at rein v0.1.2, which adds named imports.
+
 ## 0.3.0
 
 - Highlight named imports: `import { fix } from "./ci/fix";`, `import { fix as ciFix } from "./ci/fix";`.
