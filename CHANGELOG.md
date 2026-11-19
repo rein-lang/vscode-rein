@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/rein-lang/vscode-rein/compare/v0.2.0...v0.3.0) (2026-11-19)
+
+
+### Features
+
+* **grammar:** color @program/function references like local refs ([#3](https://github.com/rein-lang/vscode-rein/issues/3)) ([f80987c](https://github.com/rein-lang/vscode-rein/commit/f80987ce15f291a1748faa90d5c09bc74cedf82d))
+* **grammar:** highlight import { } from ([#45](https://github.com/rein-lang/vscode-rein/issues/45)) ([b21ea02](https://github.com/rein-lang/vscode-rein/commit/b21ea027040f7f49c68039560c124354293fa61a))
+
+
+### Bug Fixes
+
+* install rein v0.1.1 ([#40](https://github.com/rein-lang/vscode-rein/issues/40)) ([510290c](https://github.com/rein-lang/vscode-rein/commit/510290c9de8e2ec15d5d48526c172a6faba5a69f))
+
 ## 0.3.0
 
 - Highlight named imports: `import { fix } from "./ci/fix";`, `import { fix as ciFix } from "./ci/fix";`.
