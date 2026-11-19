@@ -1,20 +1,32 @@
 {
-  "name": "rein",
-  "displayName": "Rein",
-  "description": "Language support for Rein, a small language for agent decision flows.",
-  "version": "0.1.0",
-  "publisher": "tupe12334",
+  "name": "rein-language",
+  "displayName": "Rein Language",
+  "icon": "assets/icon-256.png",
+  "description": "Language support for Rein, a small language for agent decision processes.",
+  "version": "0.3.3",
+  "publisher": "rein-lang",
   "private": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tupe12334/rein"
+    "url": "https://github.com/rein-lang/vscode-rein"
   },
+  "bugs": {
+    "url": "https://github.com/rein-lang/vscode-rein/issues"
+  },
+  "homepage": "https://rein-lang.com",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Programming Languages"
+  ],
+  "keywords": [
+    "rein",
+    "agent",
+    "flow",
+    "decision",
+    "language server"
   ],
   "main": "./extension.js",
   "activationEvents": [

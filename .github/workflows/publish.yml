@@ -1,0 +1,52 @@
+# Tests every pull request and every push to main. On a push to main, it
+# publishes the package.json version to the VS Code Marketplace when that
+# version is not there yet. A release is a merged version bump. Auth is
+# Marketplace trusted publishing (GitHub OIDC), so no token is stored.
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+
+  publish:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # ponytail: no concurrency group; it would drop a queued run and skip a
+    # version. Two runs of one version are safe: --skip-duplicate.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      # No install scripts run in the job that holds the OIDC token.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec vsce publish --oidc --skip-duplicate

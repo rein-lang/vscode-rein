@@ -7,6 +7,7 @@
     { "include": "#comments" },
     { "include": "#strings" },
     { "include": "#template" },
+    { "include": "#import" },
     { "include": "#keywords" },
     { "include": "#types" },
     { "include": "#reference" },
@@ -104,8 +105,21 @@
         },
         {
           "name": "invalid.illegal",
-          "match": "\\b(import|from|else|for|while|do|let|var)\\b"
+          "match": "\\b(else|for|while|do|let|var)\\b"
         }
+      ]
+    },
+    "import": {
+      "name": "meta.import.rein",
+      "begin": "\\b(import)\\b",
+      "beginCaptures": { "1": { "name": "keyword.control.import" } },
+      "end": "(?=;)|$",
+      "patterns": [
+        { "name": "keyword.control.import", "match": "\\b(from|as)\\b" },
+        { "name": "punctuation.definition.block", "match": "[{}]" },
+        { "name": "punctuation.separator.comma", "match": "," },
+        { "name": "variable.other.rein", "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b" },
+        { "include": "#strings" }
       ]
     },
     "types": {
@@ -114,7 +128,7 @@
     },
     "reference": {
       "name": "entity.name.function.rein",
-      "match": "@\\.\\.?/[A-Za-z0-9_/]+"
+      "match": "@(?:\\.\\.?/[A-Za-z0-9_/]+|[A-Za-z0-9_][A-Za-z0-9_-]*(?:/[A-Za-z0-9_]+)*)"
     },
     "globals": {
       "name": "support.function.rein",
