@@ -84,18 +84,25 @@
       "$0"
     ]
   },
+  "Import": {
+    "prefix": "import",
+    "description": "Named import of a Rein function by path, without an extension",
+    "body": [
+      "import { ${1:name} } from \"./${2:path}\";$0"
+    ]
+  },
   "Reference": {
     "prefix": "ref",
-    "description": "Reference to another Rein function by path, without an extension",
+    "description": "Return an imported Rein function, which hands the agent to it",
     "body": [
-      "return @./${1:folder}/${2:name};$0"
+      "return ${1:name};$0"
     ]
   },
   "Call a template": {
     "prefix": "call",
-    "description": "Return a call to a template reference with one named string argument",
+    "description": "Return a call to an imported Rein template with one named string argument",
     "body": [
-      "return @./${1:templates/reply}(${2:name}=`${3:argument}`);$0"
+      "return ${1:name}(${2:arg}=`${3:argument}`);$0"
     ]
   }
 }
