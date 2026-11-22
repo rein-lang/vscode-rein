@@ -218,6 +218,35 @@ check("@./path reference still is entity.name.function outside import", async ()
   assert.ok(hasScope(tokenFor(lines, "@./ci/fix"), "entity.name.function"));
 });
 
+check("format type names are storage.type.rein, like string", async () => {
+  const lines = await tokenize(
+    ["/** Link. */", "export default function h(", "  /** Where? */ link: IRI,", "  /** When? */ at: DateTime,", ") {", "  return `${link}`;", "}"].join("\n"),
+  );
+  for (const name of ["IRI", "DateTime"]) {
+    const token = tokenFor(lines, name);
+    assert.ok(hasScope(token, "storage.type.rein"), `${name}: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
+check("format type name in a string or template is not a type", async () => {
+  const lines = await tokenize('const s = "Date"; const t = `Email`;');
+  for (const name of ["Date", "Email"]) {
+    const token = tokenFor(lines, name);
+    assert.ok(!hasScope(token, "storage.type.rein"), `${name}: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
+check("format type name inside a longer identifier is not a type", async () => {
+  const lines = await tokenize("const UUIDs = 1; const dates = 2;");
+  assert.ok(!hasScope(tokenFor(lines, "UUIDs"), "storage.type.rein"));
+});
+
+check("import of a .schema file: name is variable.other, path is string.quoted.double", async () => {
+  const lines = await tokenize('import { Ticket } from "./ticket.schema";');
+  assert.ok(hasScope(tokenFor(lines, "Ticket"), "variable.other"), JSON.stringify(tokenFor(lines, "Ticket").scopes));
+  assert.ok(hasScope(tokenFor(lines, "./ticket.schema"), "string.quoted.double"));
+});
+
 (async () => {
   let failed = 0;
   for (const { name, fn } of checks) {

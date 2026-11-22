@@ -124,7 +124,7 @@
     },
     "types": {
       "name": "storage.type.rein",
-      "match": "\\b(boolean|string)\\b"
+      "match": "\\b(boolean|string|IRIReference|URIReference|URITemplate|IdnEmail|IdnHostname|RelativeJSONPointer|JSONPointer|DateTime|Duration|IPv4|IPv6|IRI|URI|Email|Hostname|Date|Time|UUID|Regex)\\b"
     },
     "reference": {
       "name": "entity.name.function.rein",
