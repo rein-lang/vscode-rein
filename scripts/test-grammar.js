@@ -260,6 +260,35 @@ check("all 19 format names are typed with the same scope as string", async () =>
   }
 });
 
+// Optional check against the rein source. Runs only when a rein checkout sits next to this repo
+// (layout: <dir>/vscode-rein-types and <dir>/rein), or when REIN_FORMATS_RS points at formats.rs.
+// CI does not check out rein, so the check is skipped there and the copied list above still runs.
+const reinFormatsPath =
+  process.env.REIN_FORMATS_RS || path.resolve(__dirname, "..", "..", "rein", "crates", "rein-core", "src", "formats.rs");
+
+check("format names equal Format::spec names for Format::ALL in the rein checkout", async () => {
+  if (!fs.existsSync(reinFormatsPath)) {
+    return { skipped: `no rein checkout at ${reinFormatsPath}` };
+  }
+  const source = fs.readFileSync(reinFormatsPath, "utf8");
+  const all = source.match(/pub const ALL: \[Format; \d+\] = \[([\s\S]*?)\];/);
+  assert.ok(all, "Format::ALL not found in formats.rs");
+  const variants = [...all[1].matchAll(/Format::(\w+)/g)].map((m) => m[1]);
+  assert.strictEqual(variants.length, 19, `Format::ALL has ${variants.length} entries`);
+
+  const specStart = source.indexOf("fn spec(self)");
+  assert.ok(specStart >= 0, "Format::spec not found in formats.rs");
+  const specNames = new Map(
+    [...source.slice(specStart).matchAll(/Format::(\w+)\s*=>\s*\(\s*"([^"]+)"/g)].map((m) => [m[1], m[2]]),
+  );
+  const reinNames = variants.map((variant) => {
+    assert.ok(specNames.has(variant), `Format::${variant} has no spec entry`);
+    return specNames.get(variant);
+  });
+  assert.deepStrictEqual([...reinNames].sort(), [...formatNames].sort());
+  return undefined;
+});
+
 check("format type name in a string or template is not a type", async () => {
   const lines = await tokenize('const s = "Date"; const t = `Email`;');
   for (const name of ["Date", "Email"]) {
@@ -299,10 +328,49 @@ check("format names in value and key positions are not types", async () => {
   }
 });
 
-check("format names after | and < are types", async () => {
-  const lines = await tokenize("function g(a: string | Date) {}\nconst m: List<Date> = 1;");
-  assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"));
+// Rein syntax: a type follows a colon, as in `const v: Date` or a parameter `a: Date`.
+check("format names after a colon are types (rein syntax)", async () => {
+  const lines = await tokenize("const m: Date = 1;\nfunction g(a: Date, b: string) {}");
+  assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"), JSON.stringify(tokenFor(lines, "Date").scopes));
   assert.ok(hasScope(tokenFor([lines[1]], "Date"), "storage.type.rein"));
+  assert.ok(hasScope(tokenFor([lines[1]], "string"), "storage.type.rein"));
+});
+
+// Grammar-level only: rein unions take string literals, so `string | Date` is not valid rein.
+check("grammar-level only: a type after | is storage.type.rein, with or without spaces", async () => {
+  const sources = ["function g(a: string|Date) {}", "function g(a: string | Date) {}", "function g(a: string|  Date) {}"];
+  for (const source of sources) {
+    const lines = await tokenize(source);
+    assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"), `${source}: ${JSON.stringify(tokenFor(lines, "Date").scopes)}`);
+  }
+  const bar = tokenFor(await tokenize("function g(a: string|Date) {}"), "|");
+  assert.ok(hasScope(bar, "keyword.operator.union"), JSON.stringify(bar.scopes));
+});
+
+// Grammar-level only: rein has no generics, so `List<Date>` is not valid rein.
+check("grammar-level only: a type after < is storage.type.rein", async () => {
+  const lines = await tokenize("const m: List<Date> = 1;");
+  assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"), JSON.stringify(tokenFor(lines, "Date").scopes));
+});
+
+check("a type after a colon keeps its scope with 0 to 12 spaces", async () => {
+  for (const spaces of [0, 1, 2, 3, 4, 8, 12]) {
+    const lines = await tokenize(`const v:${" ".repeat(spaces)}Date = 1;`);
+    const token = tokenFor(lines, "Date");
+    assert.ok(hasScope(token, "storage.type.rein"), `${spaces} spaces: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
+check("a type on the next line after a colon is storage.type.rein", async () => {
+  const lines = await tokenize("const v:\n  Date = 1;\nconst w:\n\n\tEmail = 2;");
+  assert.ok(hasScope(tokenFor([lines[1]], "Date"), "storage.type.rein"), JSON.stringify(tokenFor([lines[1]], "Date").scopes));
+  assert.ok(hasScope(tokenFor([lines[4]], "Email"), "storage.type.rein"), JSON.stringify(tokenFor([lines[4]], "Email").scopes));
+});
+
+check("a non-type word on the next line after a colon is not a type", async () => {
+  const lines = await tokenize("const v:\n  Dates = 1;");
+  const token = tokenFor([lines[1]], "Dates");
+  assert.ok(!hasScope(token, "storage.type.rein"), JSON.stringify(token.scopes));
 });
 
 // Pinned behavior: boolean and string after a dot or hyphen are member or identifier names, not types.
@@ -329,16 +397,22 @@ check("import of a format-named binding from a .schema file is variable.other, n
 
 (async () => {
   let failed = 0;
+  let skipped = 0;
   for (const { name, fn } of checks) {
     try {
-      await fn();
-      console.log(`ok - ${name}`);
+      const result = await fn();
+      if (result && result.skipped) {
+        skipped += 1;
+        console.log(`skip - ${name}: ${result.skipped}`);
+      } else {
+        console.log(`ok - ${name}`);
+      }
     } catch (err) {
       failed += 1;
       console.log(`not ok - ${name}`);
       console.log(`  ${String(err.message).split("\n").join("\n  ")}`);
     }
   }
-  console.log(`${checks.length - failed} passed, ${failed} failed`);
+  console.log(`${checks.length - failed - skipped} passed, ${failed} failed, ${skipped} skipped`);
   process.exit(failed === 0 ? 0 : 1);
 })();
