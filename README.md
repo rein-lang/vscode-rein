@@ -4,6 +4,8 @@
 
 Site: [rein-lang.com](https://rein-lang.com). Docs: [rein-lang.com/docs](https://rein-lang.com/docs/). Editor setup: [rein-lang.com/docs/editor](https://rein-lang.com/docs/editor).
 
+Build the apps your agent uses. Use this extension to write them, and `rein debug` to step through one in the browser.
+
 Syntax highlighting, snippets, and language server support for `.rein` files.
 Rein mimics TypeScript syntax and types, except `@` references (for example `@./ci/fix`). The grammar follows TypeScript's scope names.
 
