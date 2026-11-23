@@ -10,6 +10,7 @@
     { "include": "#import" },
     { "include": "#keywords" },
     { "include": "#types" },
+    { "include": "#types-on-next-line" },
     { "include": "#reference" },
     { "include": "#globals" },
     { "include": "#argument-names" },
@@ -123,8 +124,19 @@
       ]
     },
     "types": {
-      "name": "storage.type.rein",
-      "match": "\\b(boolean|string)\\b"
+      "match": "(?<=:|[^|]\\||^\\|)\\s*(boolean|string|IRIReference|URIReference|URITemplate|IdnEmail|IdnHostname|RelativeJSONPointer|JSONPointer|DateTime|Duration|IPv4|IPv6|IRI|URI|Email|Hostname|Date|Time|UUID|Regex)\\b",
+      "captures": { "1": { "name": "storage.type.rein" } }
+    },
+    "types-on-next-line": {
+      "begin": "(?<=:|[^|]\\||^\\|)\\s*$",
+      "end": "(?=\\S)",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "match": "^\\s*(boolean|string|IRIReference|URIReference|URITemplate|IdnEmail|IdnHostname|RelativeJSONPointer|JSONPointer|DateTime|Duration|IPv4|IPv6|IRI|URI|Email|Hostname|Date|Time|UUID|Regex)\\b",
+          "captures": { "1": { "name": "storage.type.rein" } }
+        }
+      ]
     },
     "reference": {
       "name": "entity.name.function.rein",
