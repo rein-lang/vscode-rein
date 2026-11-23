@@ -22,14 +22,19 @@ const registry = new vsctm.Registry({
   },
 });
 
-// Returns one array of { text, scopes } per line.
+// Returns one array of { text, scopes, start, end } per line. start and end are offsets in the line.
 async function tokenize(text) {
   const grammar = await registry.loadGrammar("source.rein");
   let ruleStack = vsctm.INITIAL;
   return text.split("\n").map((line) => {
     const result = grammar.tokenizeLine(line, ruleStack);
     ruleStack = result.ruleStack;
-    return result.tokens.map((t) => ({ text: line.slice(t.startIndex, t.endIndex), scopes: t.scopes }));
+    return result.tokens.map((t) => ({
+      text: line.slice(t.startIndex, t.endIndex),
+      scopes: t.scopes,
+      start: t.startIndex,
+      end: t.endIndex,
+    }));
   });
 }
 
@@ -41,6 +46,15 @@ function tokenFor(lines, text) {
     }
   }
   throw new Error(`no token with text ${JSON.stringify(text)}`);
+}
+
+// Returns the token that covers character `index` of one tokenized line.
+// The grammar merges neighbouring tokens with the same scopes, so a plain identifier
+// such as the member in `obj.Date` may not have a token whose text is exactly "Date".
+function tokenAt(line, index) {
+  const token = line.find((t) => t.start <= index && index < t.end);
+  if (!token) throw new Error(`no token at index ${index}`);
+  return token;
 }
 
 function hasScope(token, scope) {
@@ -262,14 +276,45 @@ check("format type name inside a longer identifier is not a type", async () => {
   }
 });
 
-check("format type name after a dot is not a type, but after a colon it is", async () => {
-  const lines = await tokenize("const a = obj.Date;\nconst b: Date = 1;");
-  // The grammar may merge ".Date" into one token, so match the text by substring here.
-  const member = lines[0].find((t) => t.text.includes("Date"));
-  assert.ok(member, "no token containing Date on line 1");
-  assert.ok(!hasScope(member, "storage.type.rein"), `obj.Date: ${JSON.stringify(member.scopes)}`);
-  const typed = tokenFor([lines[1]], "Date");
+check("format type name after a dot or hyphen is not a type, with or without spaces, but after a colon it is", async () => {
+  const sourceLines = ["const a = obj.Date;", "const b = obj . Date;", "const c = pr-Date;", "const d: Date = 1;"];
+  const lines = await tokenize(sourceLines.join("\n"));
+  // Untyped member names have no token of their own text (the grammar merges them), so find the token by offset.
+  for (let i = 0; i < 3; i++) {
+    const index = sourceLines[i].indexOf("Date");
+    const token = tokenAt(lines[i], index);
+    assert.ok(token.start <= index && index < token.end);
+    assert.ok(!hasScope(token, "storage.type.rein"), `line ${i + 1}: ${JSON.stringify(token.scopes)}`);
+  }
+  const typed = tokenFor([lines[3]], "Date");
   assert.ok(hasScope(typed, "storage.type.rein"), `: Date: ${JSON.stringify(typed.scopes)}`);
+});
+
+check("format names in value and key positions are not types", async () => {
+  const cases = ["f(Date);", "const o = { Date: 1 };", "const n = Date.now();", "return Date;"];
+  for (const source of cases) {
+    const line = (await tokenize(source))[0];
+    const token = tokenAt(line, source.indexOf("Date"));
+    assert.ok(!hasScope(token, "storage.type.rein"), `${source}: ${JSON.stringify(token.scopes)}`);
+  }
+});
+
+check("format names after | and < are types", async () => {
+  const lines = await tokenize("function g(a: string | Date) {}\nconst m: List<Date> = 1;");
+  assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"));
+  assert.ok(hasScope(tokenFor([lines[1]], "Date"), "storage.type.rein"));
+});
+
+// Pinned behavior: boolean and string after a dot or hyphen are member or identifier names, not types.
+check("boolean and string after a dot or hyphen are not types", async () => {
+  const sourceLines = ["const a = obj.string;", "const b = obj . boolean;", "const c = pr-string;"];
+  const lines = await tokenize(sourceLines.join("\n"));
+  for (let i = 0; i < sourceLines.length; i++) {
+    const word = sourceLines[i].includes("boolean") ? "boolean" : "string";
+    const index = sourceLines[i].indexOf(word);
+    const token = tokenAt(lines[i], index);
+    assert.ok(!hasScope(token, "storage.type.rein"), `${sourceLines[i]}: ${JSON.stringify(token.scopes)}`);
+  }
 });
 
 check("import of a format-named binding from a .schema file is variable.other, not a type", async () => {
