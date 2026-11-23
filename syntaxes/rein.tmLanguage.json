@@ -124,11 +124,11 @@
       ]
     },
     "types": {
-      "match": "(?<=:|\\||<)\\s*(boolean|string|IRIReference|URIReference|URITemplate|IdnEmail|IdnHostname|RelativeJSONPointer|JSONPointer|DateTime|Duration|IPv4|IPv6|IRI|URI|Email|Hostname|Date|Time|UUID|Regex)\\b",
+      "match": "(?<=:|[^|]\\||^\\|)\\s*(boolean|string|IRIReference|URIReference|URITemplate|IdnEmail|IdnHostname|RelativeJSONPointer|JSONPointer|DateTime|Duration|IPv4|IPv6|IRI|URI|Email|Hostname|Date|Time|UUID|Regex)\\b",
       "captures": { "1": { "name": "storage.type.rein" } }
     },
     "types-on-next-line": {
-      "begin": "(?<=:|\\|)\\s*$",
+      "begin": "(?<=:|[^|]\\||^\\|)\\s*$",
       "end": "(?=\\S)",
       "applyEndPatternLast": true,
       "patterns": [

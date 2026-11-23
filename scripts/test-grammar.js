@@ -347,10 +347,23 @@ check("grammar-level only: a type after | is storage.type.rein, with or without 
   assert.ok(hasScope(bar, "keyword.operator.union"), JSON.stringify(bar.scopes));
 });
 
-// Grammar-level only: rein has no generics, so `List<Date>` is not valid rein.
-check("grammar-level only: a type after < is storage.type.rein", async () => {
-  const lines = await tokenize("const m: List<Date> = 1;");
-  assert.ok(hasScope(tokenFor(lines, "Date"), "storage.type.rein"), JSON.stringify(tokenFor(lines, "Date").scopes));
+// Rein has no generics, so `<` never starts a type. `List<Date>` is not valid rein, and `<` is a comparison.
+check("a format name after < is not a type, since rein has no generics", async () => {
+  const source = "const m: List<Date> = 1;";
+  const token = tokenAt((await tokenize(source))[0], source.indexOf("Date"));
+  assert.ok(!hasScope(token, "storage.type.rein"), JSON.stringify(token.scopes));
+});
+
+check("a format name after the || operator is not a type", async () => {
+  const lines = await tokenize("const ok = a || Date;");
+  const token = tokenAt(lines[0], "const ok = a || Date;".indexOf("Date"));
+  assert.ok(!hasScope(token, "storage.type.rein"), JSON.stringify(token.scopes));
+});
+
+check("a format name in a less-than comparison is not a type", async () => {
+  const lines = await tokenize("if (n < Duration) {}");
+  const token = tokenAt(lines[0], "if (n < Duration) {}".indexOf("Duration"));
+  assert.ok(!hasScope(token, "storage.type.rein"), JSON.stringify(token.scopes));
 });
 
 check("a type after a colon keeps its scope with 0 to 12 spaces", async () => {
