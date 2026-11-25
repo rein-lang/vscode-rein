@@ -98,7 +98,8 @@
     "test": "node scripts/test-find-server.js && node scripts/test-grammar.js"
   },
   "dependencies": {
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^9.0.1",
+    "which": "^5.0.0"
   },
   "devDependencies": {
     "@vscode/vsce": "^4.1.0",
