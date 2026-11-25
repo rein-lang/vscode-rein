@@ -4,3 +4,9 @@
 scripts/
 pnpm-lock.yaml
 pnpm-workspace.yaml
+.github/
+assets/**
+!assets/icon-256.png
+.gitmodules
+release-please-config.json
+.release-please-manifest.json

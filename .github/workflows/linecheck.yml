@@ -1,0 +1,21 @@
+# Fails when a file passes its error limit in linecheck.yml.
+name: linecheck
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  linecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: tupe12334/linecheck@e71061c840a266bc64f7c3de1f5241989c055857 # v1.2.2
+        with:
+          args: --status
