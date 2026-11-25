@@ -3,6 +3,7 @@ const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
 const { LanguageClient } = require("vscode-languageclient/node");
+const { collectAnswer } = require("./lib/ask.js");
 
 let client;
 
@@ -83,8 +84,72 @@ async function startServer() {
   await client.start();
 }
 
+// Debugging. `rein dap` walks the program. A question it cannot answer comes back as a `rein/ask` event, and the
+// answer goes back as a `rein/answer` request.
+function debugProgram(noDebug) {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document.languageId !== "rein") {
+    vscode.window.showWarningMessage("Rein: open a .rein file to run it.");
+    return undefined;
+  }
+  const config = {
+    type: "rein",
+    request: "launch",
+    name: noDebug ? "Run Rein Program" : "Debug Rein Program",
+    program: editor.document.uri.fsPath,
+  };
+  const folder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+  return vscode.debug.startDebugging(folder, config, { noDebug });
+}
+
+// Starts the same binary as `rein lsp`, with `dap`.
+class ReinDebugAdapterFactory {
+  createDebugAdapterDescriptor() {
+    const configured = vscode.workspace.getConfiguration("rein").get("serverPath", "rein");
+    const command = findServer(configured);
+    if (!command) {
+      vscode.window.showErrorMessage(`Rein: binary "${configured}" not found. Set rein.serverPath.`);
+      return undefined;
+    }
+    return new vscode.DebugAdapterExecutable(command, ["dap"]);
+  }
+}
+
+// A debug session with no launch.json (F5 on a .rein file) runs the open program.
+const debugConfigurations = {
+  resolveDebugConfiguration(_folder, config) {
+    if (config.program) return config;
+    const editor = vscode.window.activeTextEditor;
+    if (!editor || editor.document.languageId !== "rein") {
+      vscode.window.showErrorMessage("Rein: open a .rein file to debug it.");
+      return undefined;
+    }
+    return { ...config, type: "rein", request: "launch", name: "Debug Rein Program", program: editor.document.uri.fsPath };
+  },
+};
+
+function showPrompt(prompt) {
+  if (prompt.kind === "pick") {
+    return vscode.window.showQuickPick(prompt.items, { title: prompt.title, placeHolder: prompt.placeHolder, ignoreFocusOut: true });
+  }
+  return vscode.window.showInputBox({ title: prompt.title, prompt: prompt.prompt, ignoreFocusOut: true });
+}
+
+async function answerAsk(event) {
+  if (event.event !== "rein/ask") return;
+  const value = await collectAnswer(event.body, showPrompt);
+  // Cancelled prompt: stop the program rather than leave it waiting.
+  if (value === undefined) return vscode.debug.stopDebugging(event.session);
+  return event.session.customRequest("rein/answer", { key: event.body.key, value });
+}
+
 function activate(context) {
   context.subscriptions.push(
+    vscode.commands.registerCommand("rein.debugProgram", () => debugProgram(false)),
+    vscode.commands.registerCommand("rein.runProgram", () => debugProgram(true)),
+    vscode.debug.registerDebugAdapterDescriptorFactory("rein", new ReinDebugAdapterFactory()),
+    vscode.debug.registerDebugConfigurationProvider("rein", debugConfigurations),
+    vscode.debug.onDidReceiveDebugSessionCustomEvent(answerAsk),
     vscode.commands.registerCommand("rein.restartServer", () => startServer()),
     // The server's reference code lens sends LSP JSON. VS Code's references view takes its own types.
     vscode.commands.registerCommand("rein.showReferences", (uri, position, locations) => {

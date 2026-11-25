@@ -20,6 +20,11 @@ const vscodeStub = {
   },
   window: { showErrorMessage: () => {} },
   commands: { registerCommand: () => ({ dispose() {} }) },
+  debug: {
+    registerDebugAdapterDescriptorFactory: () => ({ dispose() {} }),
+    registerDebugConfigurationProvider: () => ({ dispose() {} }),
+    onDidReceiveDebugSessionCustomEvent: () => ({ dispose() {} }),
+  },
 };
 
 class LanguageClientStub {
