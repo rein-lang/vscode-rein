@@ -1,0 +1,23 @@
+name: install tag
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * *" # catch a new rein release even when this repo is quiet
+
+jobs:
+  install-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Every documented install of the rein CLI must use the latest rein-lang/rein release tag.
+      - name: Install commands use the latest rein release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh api repos/rein-lang/rein/releases/latest --jq .tag_name)
+          stale=$(grep -rn "cargo install --git https://github.com/rein-lang/rein" README.md extension.js | grep -v -- "--tag $tag " || true)
+          if [ -n "$stale" ]; then echo "Use --tag $tag (latest rein release) in:"; echo "$stale"; exit 1; fi
+          echo "All install commands use $tag"
