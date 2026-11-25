@@ -232,7 +232,7 @@ check("@./path reference still is entity.name.function outside import", async ()
   assert.ok(hasScope(tokenFor(lines, "@./ci/fix"), "entity.name.function"));
 });
 
-check("format type names are storage.type.rein, like string", async () => {
+check("IRI and DateTime parameter types are storage.type.rein, like string", async () => {
   const lines = await tokenize(
     ["/** Link. */", "export default function h(", "  /** Where? */ link: IRI,", "  /** When? */ at: DateTime,", ") {", "  return `${link}`;", "}"].join("\n"),
   );
@@ -268,6 +268,8 @@ const reinFormatsPath =
 
 check("format names equal Format::spec names for Format::ALL in the rein checkout", async () => {
   if (!fs.existsSync(reinFormatsPath)) {
+    // An explicit REIN_FORMATS_RS that points nowhere is a setup error, not a reason to skip.
+    assert.ok(!process.env.REIN_FORMATS_RS, `REIN_FORMATS_RS points at a missing file: ${reinFormatsPath}`);
     return { skipped: `no rein checkout at ${reinFormatsPath}` };
   }
   const source = fs.readFileSync(reinFormatsPath, "utf8");
