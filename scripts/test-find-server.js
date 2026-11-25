@@ -80,6 +80,18 @@ test("relative path resolves against the first workspace folder", () => {
   assert.strictEqual(findServer("tools/rein-tool"), bin);
 });
 
+test("bare name is looked up on PATH", () => {
+  const bin = executable(path.join(tmp, "on-path", "rein-tool"));
+  const savedPath = process.env.PATH;
+  process.env.PATH = [path.join(tmp, "empty"), path.dirname(bin)].join(path.delimiter);
+  try {
+    assert.strictEqual(findServer("rein-tool"), bin);
+    assert.strictEqual(findServer("rein-missing"), undefined);
+  } finally {
+    process.env.PATH = savedPath;
+  }
+});
+
 test("missing binary gives undefined", () => {
   assert.strictEqual(findServer(path.join(tmp, "nope", "rein")), undefined);
   assert.strictEqual(findServer("~/nope/rein"), undefined);

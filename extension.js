@@ -2,6 +2,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const vscode = require("vscode");
+const which = require("which");
 const { LanguageClient } = require("vscode-languageclient/node");
 
 let client;
@@ -26,8 +27,9 @@ function findServer(configured) {
     // Works inside the rein repo without an install.
     for (const folder of vscode.workspace.workspaceFolders || []) {
       for (const profile of ["debug", "release"]) {
-        const built = path.join(folder.uri.fsPath, "target", profile, "rein");
-        if (isExecutable(built)) return built;
+        // which adds `.exe` on Windows.
+        const built = which.sync("rein", { path: path.join(folder.uri.fsPath, "target", profile), nothrow: true });
+        if (built) return built;
       }
     }
   }
@@ -35,17 +37,14 @@ function findServer(configured) {
   if (path.isAbsolute(expanded)) {
     return isExecutable(expanded) ? expanded : undefined;
   }
-  if (expanded.includes(path.sep)) {
+  if (/[\\/]/.test(expanded)) {
     // A relative path is relative to the first workspace folder.
     const folder = (vscode.workspace.workspaceFolders || [])[0];
     const full = path.resolve(folder ? folder.uri.fsPath : ".", expanded);
     return isExecutable(full) ? full : undefined;
   }
-  for (const dir of (process.env.PATH || "").split(path.delimiter)) {
-    const candidate = path.join(dir, configured);
-    if (isExecutable(candidate)) return candidate;
-  }
-  return undefined;
+  // which handles PATHEXT and quoted PATH entries on Windows.
+  return which.sync(configured, { nothrow: true }) ?? undefined;
 }
 
 async function stopServer() {
